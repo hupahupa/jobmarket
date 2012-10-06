@@ -1,9 +1,6 @@
 <?php
 
 class SiteController extends Controller {
-    /**
- 	 * Declares class-based actions.
-	 */
 	public function actions() {
 		return array(
 			# captcha action renders the CAPTCHA image displayed on the contact page
@@ -19,30 +16,54 @@ class SiteController extends Controller {
 		);
 	}
 
-	/**
-	 * This is the default 'index' action that is invoked
-	 * when an action is not explicitly requested by users.
-	 */
+	/*
+	* Action nay se show trang chu neu user chua login
+	* hoac redirect nguoi dung den trang ca nhan dua 
+	* vao loai nguoi dung
+	*/
 	public function actionIndex() {
-	    #if (Yii::app()->user->isGuest) {
-        #    $this->render('index');
-        #} else {
-        #    if (Yii::app()->user->checkAccess('admin')) {
-        #        $this->redirect(array('admin/index'));
-        #    } else {
-        #        $this->redirect(array('user/accountBalance', 'id'=>Yii::app()->user->_id));
-        #    }
-	    #} 
-        $this->render('index');
+		/*
+		* Kiem tra nguoi dung da login
+		*/
+	    if (!Yii::app()->user->isGuest){
+			/*
+			* Da dang nhan roi thi kiem tra nguoi dung
+			* dang o mac dinh loai nguoi dung nao de redirect den
+			* trang ca nhan phu hop
+			*/			
+						
+            /*
+     		$this->redirect(array('user/accountBalance', 'id'=>Yii::app()->user->_id));
+			*/			
+        } else {
+			/*
+			* Neu chua login thi:
+			* Render trang index chua login
+			*/
+			
+			/*
+			* Lay image slideshow
+			*/
+			
+			/*
+			* Get category
+			*/
+			
+			/*
+			* Get cac job moi nhat voi n truyen vao
+			*/
+			
+			/*
+			* Get top cac freelancer voi n truyen vao
+			*/			
+            $this->render('index'/*Truyen du lieu ra*/);
+	    }				
 	}
 
 	private function loadUser() {
 	  return User::model()->findbyPk(Yii::app()->user->_id);
 	}
 
-	/**
-	 * This is the action to handle external exceptions.
-	 */
 	public function actionError() {
 	    if ($error = Yii::app()->errorHandler->error) {
             if (Yii::app()->request->isAjaxRequest) {
@@ -54,9 +75,6 @@ class SiteController extends Controller {
 	    }
 	}
 
-	/**
-	 * Displays the contact page
-	 */
 	public function actionContact() {
 		$model = new ContactForm;
 		if (isset($_POST['ContactForm'])) {
@@ -76,9 +94,6 @@ class SiteController extends Controller {
 		$this->render('support');
 	}
 
-	/**
-	 * Displays the login page
-	 */
 	public function actionLogin() {
 		$model = new LoginForm;
 		// collect user input data

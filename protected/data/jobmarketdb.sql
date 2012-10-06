@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Oct 05, 2012 at 05:01 PM
+-- Generation Time: Oct 06, 2012 at 07:32 AM
 -- Server version: 5.5.24-log
 -- PHP Version: 5.4.3
 
@@ -19,6 +19,47 @@ SET time_zone = "+00:00";
 --
 -- Database: `jobmarketdb`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `authassignment`
+--
+
+DROP TABLE IF EXISTS `authassignment`;
+CREATE TABLE IF NOT EXISTS `authassignment` (
+  `itemname` varchar(64) NOT NULL,
+  `userid` varchar(64) NOT NULL,
+  `bizrule` text,
+  `data` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `authitem`
+--
+
+DROP TABLE IF EXISTS `authitem`;
+CREATE TABLE IF NOT EXISTS `authitem` (
+  `name` varchar(64) NOT NULL,
+  `type` int(11) NOT NULL,
+  `description` text,
+  `bizrule` text,
+  `data` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `authitemchild`
+--
+
+DROP TABLE IF EXISTS `authitemchild`;
+CREATE TABLE IF NOT EXISTS `authitemchild` (
+  `parent` varchar(64) NOT NULL,
+  `child` varchar(64) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -263,7 +304,7 @@ CREATE TABLE IF NOT EXISTS `yiisession` (
 --
 
 INSERT INTO `yiisession` (`id`, `expire`, `data`) VALUES
-('bnc4n21ipag76idcg14ioq16s6', 1349458429, '');
+('9p80qav4tt1gfr0r877vb8bd36', 1349512297, '');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
