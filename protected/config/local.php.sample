@@ -3,10 +3,10 @@
 return array(
    'components'=>array(
         'db'=>array(
-            'connectionString' => "mysql:host=localhost;dbname=jobmarketdb",
+            'connectionString' => "mysql:host=localhost;dbname=jobmarket",
             // 'emulatePrepare' => true,
-            'username' => 'jobmarketdb',
-            'password' => 'secret',
+            'username' => 'jobmarket',
+            'password' => '',
             'charset' => 'utf8',
             // turn on schema caching to improve performance
             // 'schemaCachingDuration'=>3600,
