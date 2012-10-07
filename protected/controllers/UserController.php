@@ -3,40 +3,30 @@
 class UserController extends Controller {
     const PAGE_SIZE = 10;
 
-    /**
-     * @var string specifies the default action 
-     */
     public $defaultAction='admin';
 
-    /**
-     * @var CActiveRecord the currently loaded data model instance.
-     */
     private $_user;
 
-    /**
-     * @return array action filters
-     */
     public function filters() {
         return array(
             'accessControl', // perform access control for CRUD operations
         );
     }
 
-    /**
-     * Specifies the access control rules.
-     * This method is used by the 'accessControl' filter.
-     * @return array access control rules
-     */
     public function accessRules() {
         return array(
             array('allow',  // all users
-                'actions'=>array('create', 'confirm', 'welcome', 
-                				'reset', 'resetThanks', 
+                'actions'=>array('create', 'confirm', 'welcome',
+                'reset', 'resetThanks',
+                'addSkill', 'addCategory', 'viewProfile', 'applyJob', 'interview', 'hire',
+                            'manageJob', 'myPartner', 'setting',
                                 'sendActivationEmail'),
                 'users'=>array('*'),
-            ),	
+            ),
             array('allow', # logged in users
-                    'actions'=>array('update', 'welcome', 'activationNeeded', 'changePassword'),
+            'actions'=>array('update', 'welcome', 'activationNeeded', 'changePassword',
+                            'addSkill', 'addCategory', 'viewProfile', 'applyJob', 'interview', 'hire',
+                            'manageJob', 'myPartner', 'setting' ),
                     'users'=>array('@'),
                 ),
             array('allow', # admins
@@ -50,27 +40,19 @@ class UserController extends Controller {
         );
     }
 
-    /**
-     * Shows a particular user.
-     */
     public function actionShow() {
         #if (Yii::app()->user->checkAccess('showUser')) {
         #}
         $this->render('show',array('user'=>$this->loadUser()));
     }
 
-    /**
-     * Creates a new user.
-     * If creation is successful, the browser will be redirected to the 'show' page.
-     */
-    
-    # Create new account 
+    # Create new account
     public function actionCreate() {
         $user = new User;
         $this->performAjaxValidation($user);
         if (isset($_POST['User'])) {
             $user->attributes = $_POST['User'];
-            
+
             $attrs = $_POST['User'];
             $user->username = trim($attrs['username']);
             $user->email = trim($attrs['email']);
@@ -79,7 +61,7 @@ class UserController extends Controller {
             $user->unique_id  = $user->generatePassword(20);
 
             $user->is_approved = 1;
-            
+
             if ($user->validate('insert')) {
                 $user->encryptPassword();
 
@@ -108,10 +90,6 @@ class UserController extends Controller {
         }
     }
 
-    /**
-     * Updates a particular user.
-     * If update is successful, the browser will be redirected to the 'show' page.
-     */
     public function actionUpdate() {
         $user = $this->loadUser();
         $this->performAjaxValidation($user);
@@ -149,10 +127,6 @@ class UserController extends Controller {
         $this->render('update', array('model'=>$user)) ;
     }
 
-    /**
-     * Deletes a particular user.
-     * If deletion is successful, the browser will be redirected to the 'list' page.
-     */
     public function actionDelete() {
         if (Yii::app()->request->isPostRequest) {
             # we only allow deletion via POST request
@@ -189,9 +163,6 @@ class UserController extends Controller {
         ));
     }
 
-    /**
-     * Manages all users.
-     */
     public function actionAdmin() {
         $this->processAdminCommand();
 
@@ -212,19 +183,19 @@ class UserController extends Controller {
             'sort'=>$sort,
         ));
     }
-    
+
     # Confirm email works
-	public function actionConfirm() {
-		$key = $_GET['key'] ;
-		User::model()->updateAll(array('is_activated'=>1),'unique_id=:unique_id', array(':unique_id'=>$key));
+    public function actionConfirm() {
+        $key = $_GET['key'] ;
+        User::model()->updateAll(array('is_activated'=>1),'unique_id=:unique_id', array(':unique_id'=>$key));
 
         $user = User::model()->findByAttributes(array('unique_id' => $key));
         if (!$user->is_approved) {
             $this->sendNotificationEmail($user);
         }
 
-		$this->render('confirm', array('user'=>$user));
-	}
+        $this->render('confirm', array('user'=>$user));
+    }
 
     public function actionWelcome() {
         $this->render('welcome', array('user'=>$this->loadUser())) ;
@@ -233,10 +204,10 @@ class UserController extends Controller {
     public function actionActivationNeeded() {
         $this->render('activationNeeded', array('user'=>$this->loadUser())) ;
     }
-    
+
     # Look up user and reset password
     public function actionReset() {
-    	$email='';   
+        $email='';
         //$this->render('reset',array('user'=>$this->loadUser())) ;
         if (isset($_REQUEST["reset_user"])) {
             $reset_user = $_REQUEST["reset_user"];
@@ -265,7 +236,7 @@ class UserController extends Controller {
     public function actionResetThanks() {
         $this->render('resetThanks');
     }
-    
+
     # Reset password and send it to user in email
     public function actionLostPass() {
         $user = $this->loadUser();
@@ -283,8 +254,8 @@ class UserController extends Controller {
         }
         $this->render('lostpass', array('user'=>$user)) ;
     }
-    
-    # Change user password 
+
+    # Change user password
     public function actionChangePassword() {
         $user = $this->loadUser(Yii::app()->user->db_id); // only allows the current user
         if (isset($_POST['User'])) {
@@ -305,14 +276,14 @@ class UserController extends Controller {
     public function actionPasswordChanged() {
         $this->render('passwordChanged') ;
     }
-    
-    # Send account activation email 
+
+    # Send account activation email
     private function sendActivationEmail($user) {
         $app_email_name = Yii::app()->params['app_email_name'];
         $app_email = Yii::app()->params['app_email'];
         $email_prefix = Yii::app()->params['email_prefix'];
         $headers = "From: $app_email_name <$app_email>\r\n"; //optional header fields
-        ini_set('sendmail_from', $app_email); 
+        ini_set('sendmail_from', $app_email);
 
         $recipient = $user->email;
         $subject = $email_prefix . "Welcome to " . Yii::app()->name;
@@ -320,25 +291,25 @@ class UserController extends Controller {
         $body = <<<EO_MAIL
 Thanks for joining!
 
-To confirm that your email works, please click on this link: 
+To confirm that your email works, please click on this link:
 $url
 
 EO_MAIL;
-        mail($recipient, $subject, $body, $headers); 
+        mail($recipient, $subject, $body, $headers);
         Yii::log("Sent email to $recipient, $subject");
     }
-    
-    // Send password email 
+
+    // Send password email
     private function sendPasswordEmail($user) {
         $app_email_name = Yii::app()->params['app_email_name'];
         $app_email = Yii::app()->params['app_email'];
         $email_prefix = Yii::app()->params['email_prefix'];
         $headers = "From: $app_email_name <$app_email>\r\n"; //optional header fields
-        ini_set('sendmail_from', $app_email); 
-    
+        ini_set('sendmail_from', $app_email);
+
         $recipient = $user->email;
-        $subject = $email_prefix . "Password reset"; 
-        $password_unhashed = $user->passwordUnHashed; 
+        $subject = $email_prefix . "Password reset";
+        $password_unhashed = $user->passwordUnHashed;
         $url = $this->createAbsoluteUrl('site/login');
         $body = <<<EO_MAIL
 Password reset
@@ -348,24 +319,24 @@ We have reset your password to $password_unhashed
 Please login and change your password:
 $url
 EO_MAIL;
-        mail($recipient, $subject, $body, $headers); 
+        mail($recipient, $subject, $body, $headers);
         Yii::log(__FUNCTION__."> Sent email to $recipient, $subject");
     }
-    
+
     public function actionSendActivationEmail() {
         $user = $this->loadUser();
         Yii::log(__FUNCTION__."> Sending activation email to user ". $user->email, 'debug');
         $this->sendActivationEmail($user);
         $this->render('activationNeeded', array('user'=>$user));
     }
-    
+
     # Send notification email to admins about new user
     private function sendNotificationEmail($user) {
         $app_email_name = Yii::app()->params['app_email_name'];
         $app_email = Yii::app()->params['app_email'];
         $email_prefix = Yii::app()->params['email_prefix'];
         $headers = "From: $app_email_name <$app_email>\r\n"; //optional header fields
-        ini_set('sendmail_from', $app_email); 
+        ini_set('sendmail_from', $app_email);
 
         $recipient = Yii::app()->params['notify_email'];
         $subject = $email_prefix . "New user registration";
@@ -379,7 +350,7 @@ Phone: {$user->phone}
 $url
 
 EO_MAIL;
-        mail($recipient, $subject, $body, $headers); 
+        mail($recipient, $subject, $body, $headers);
         Yii::log(__FUNCTION__."> Sent email to $recipient, $subject");
     }
 
@@ -422,6 +393,41 @@ EO_MAIL;
             // reload the current page to avoid duplicated delete actions
             $this->refresh();
         }
+    }
+    public function actionAddSkill(){
+        print 'action addskill';
+    }
+
+    public function actionAddCategory(){
+        print 'action add category';
+    }
+
+    public function actionViewProfile(){
+        print 'action view profile';
+    }
+
+    public function actionApplyJob(){
+        print 'action apply job';
+    }
+
+    public function actionInterview(){
+        print 'action interview';
+    }
+
+    public function actionHire(){
+        print 'action hire';
+    }
+
+    public function actionManageJob(){
+        print 'action manage job';
+    }
+
+    public function actionMyPartner(){
+        print 'action my partner';
+    }
+
+    public function actionSetting(){
+        print 'action setting';
     }
 }
 
