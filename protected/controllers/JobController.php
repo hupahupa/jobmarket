@@ -43,6 +43,7 @@ class JobController extends Controller
     }
 
     public function actionView(){
-        print 'post view job';
+        $user_type = $_GET['as'];
+        $this->render('/job/view', array('user_type'=>$user_type)) ;
     }
 }

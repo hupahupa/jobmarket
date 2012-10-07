@@ -419,7 +419,7 @@ EO_MAIL;
     }
 
     public function actionManageJob(){
-        print 'action manage job';
+        $this->render('/job/manage_job', array()) ;
     }
 
     public function actionMyPartner(){

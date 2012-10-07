@@ -139,10 +139,10 @@ class SiteController extends Controller {
     }
 
     public function actionFindJob(){
-        print 'find job';
+        $this->render('/job/find_job', array()) ;
     }
 
     public function actionFindFreelancer(){
-        print 'find freelance';
+        $this->render('/job/find_freelancer', array()) ;
     }
 }
