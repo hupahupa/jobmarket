@@ -56,7 +56,9 @@ class SiteController extends Controller {
             /*
             * Get top cac freelancer voi n truyen vao
             */
-            $this->render('index'/*Truyen du lieu ra*/);
+
+            $categories = Category::getCategories();
+            $this->render('index', array('categories'=>$categories));
         }
     }
 
